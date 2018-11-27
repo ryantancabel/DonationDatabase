@@ -1,0 +1,333 @@
+<html>
+<head>
+<title>ContactDetailsFragment.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #999999; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(0,0,128); font-weight: bold; }
+.s1 { color: rgb(0,0,0); }
+.s2 { color: rgb(128,128,128); font-style: italic; }
+.s3 { color: rgb(0,0,255); }
+.s4 { color: rgb(0,128,0); font-weight: bold; }
+</style>
+</head>
+<BODY BGCOLOR="#ffffff">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#c0c0c0" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+ContactDetailsFragment.java</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">package </span><span class="s1">ict376.murdoch.edu.au.donationdatabase; 
+ 
+</span><span class="s2">/** 
+ * Created by Hamid on 5/10/2017. 
+ */</span><span class="s1"> 
+ 
+</span><span class="s0">import </span><span class="s1">android.app.AlertDialog; 
+</span><span class="s0">import </span><span class="s1">android.app.Fragment; 
+</span><span class="s0">import </span><span class="s1">android.app.FragmentTransaction; 
+</span><span class="s0">import </span><span class="s1">android.content.DialogInterface; 
+</span><span class="s0">import </span><span class="s1">android.content.Intent; 
+</span><span class="s0">import </span><span class="s1">android.database.Cursor; 
+</span><span class="s0">import </span><span class="s1">android.os.Bundle; 
+</span><span class="s0">import </span><span class="s1">android.util.TypedValue; 
+</span><span class="s0">import </span><span class="s1">android.view.LayoutInflater; 
+</span><span class="s0">import </span><span class="s1">android.view.View; 
+</span><span class="s0">import </span><span class="s1">android.view.ViewGroup; 
+</span><span class="s0">import </span><span class="s1">android.widget.Button; 
+</span><span class="s0">import </span><span class="s1">android.widget.ScrollView; 
+</span><span class="s0">import </span><span class="s1">android.widget.TextView; 
+</span><span class="s0">import </span><span class="s1">android.widget.Toast; 
+ 
+</span><span class="s2">/** 
+ * Created by Hamid on 1/09/2017. 
+ */</span><span class="s1"> 
+ 
+</span><span class="s0">public  class </span><span class="s1">ContactDetailsFragment </span><span class="s0">extends </span><span class="s1">Fragment { 
+ 
+    </span><span class="s0">private </span><span class="s1">DBHelper mydb ; 
+ 
+    View mLayoutView; 
+ 
+    TextView name ; 
+    TextView phone; 
+    TextView email; 
+    TextView street; 
+    TextView place; 
+ 
+    </span><span class="s0">int </span><span class="s1">id_To_Update = </span><span class="s3">0</span><span class="s1">; 
+ 
+    </span><span class="s2">// the buttons</span><span class="s1"> 
+    Button mEditButton; 
+    Button mSaveButton; 
+    Button mDeleteButton; 
+ 
+    </span><span class="s2">/** 
+     * Create a new instance of DetailsFragment, initialized to 
+     * show the text at 'index'. 
+     */</span><span class="s1"> 
+    </span><span class="s0">public static </span><span class="s1">ContactDetailsFragment newInstance(</span><span class="s0">int </span><span class="s1">index) { 
+ 
+        ContactDetailsFragment f = </span><span class="s0">new </span><span class="s1">ContactDetailsFragment(); 
+ 
+        </span><span class="s2">// Supply index input as an argument.</span><span class="s1"> 
+        </span><span class="s2">// Google recommends using bundles to pass in arguments</span><span class="s1"> 
+        Bundle args = </span><span class="s0">new </span><span class="s1">Bundle(); 
+        args.putInt(</span><span class="s4">&quot;index&quot;</span><span class="s1">, index); 
+        f.setArguments(args); 
+ 
+        </span><span class="s0">return </span><span class="s1">f; 
+    } 
+ 
+    </span><span class="s2">// Retrieve the index of the contact that will be displayed</span><span class="s1"> 
+    </span><span class="s0">public int </span><span class="s1">getShownIndex() { 
+        </span><span class="s0">return </span><span class="s1">getArguments().getInt(</span><span class="s4">&quot;index&quot;</span><span class="s1">, </span><span class="s3">0</span><span class="s1">); 
+    } 
+ 
+    @Override 
+    </span><span class="s0">public </span><span class="s1">View onCreateView(LayoutInflater inflater, ViewGroup container, 
+                             Bundle savedInstanceState) { 
+        </span><span class="s0">if </span><span class="s1">(container == </span><span class="s0">null</span><span class="s1">) { 
+            </span><span class="s2">// We have different layouts, and in one of them this</span><span class="s1"> 
+            </span><span class="s2">// fragment's containing frame doesn't exist.  The fragment</span><span class="s1"> 
+            </span><span class="s2">// may still be created from its saved state, but there is</span><span class="s1"> 
+            </span><span class="s2">// no reason to try to create its view hierarchy because it</span><span class="s1"> 
+            </span><span class="s2">// won't be displayed.  Note this is not needed -- we could</span><span class="s1"> 
+            </span><span class="s2">// just run the code below, where we would create and return</span><span class="s1"> 
+            </span><span class="s2">// the view hierarchy; it would just never be used.</span><span class="s1"> 
+            </span><span class="s0">return null</span><span class="s1">; 
+        } 
+ 
+        mLayoutView = inflater.inflate(R.layout.contact_details_layout, </span><span class="s0">null</span><span class="s1">); 
+ 
+        </span><span class="s0">return </span><span class="s1">mLayoutView; 
+    } 
+ 
+    @Override 
+    </span><span class="s0">public void </span><span class="s1">onActivityCreated(Bundle savedInstanceState) { 
+ 
+        </span><span class="s0">super</span><span class="s1">.onActivityCreated(savedInstanceState); 
+ 
+        </span><span class="s0">if </span><span class="s1">(mLayoutView == </span><span class="s0">null</span><span class="s1">) 
+            </span><span class="s0">return</span><span class="s1">; 
+ 
+        name   = (TextView) mLayoutView.findViewById(R.id.editTextName); 
+        phone  = (TextView) mLayoutView.findViewById(R.id.editTextPhone); 
+        street = (TextView) mLayoutView.findViewById(R.id.editTextStreet); 
+        email  = (TextView) mLayoutView.findViewById(R.id.editTextEmail); 
+        place  = (TextView) mLayoutView.findViewById(R.id.editTextCity); 
+ 
+        mydb = </span><span class="s0">new </span><span class="s1">DBHelper(getActivity()); 
+ 
+        mSaveButton = (Button)mLayoutView.findViewById(R.id.button1); 
+        mEditButton = (Button)mLayoutView.findViewById(R.id.button_edit); 
+        mEditButton.setVisibility(View.INVISIBLE); 
+ 
+        mDeleteButton = (Button)mLayoutView.findViewById(R.id.button_delete); 
+        mDeleteButton.setVisibility(View.INVISIBLE); 
+ 
+        </span><span class="s2">//  Bundle extras = getIntent().getExtras();</span><span class="s1"> 
+ 
+        </span><span class="s0">int </span><span class="s1">Value = getShownIndex(); 
+ 
+        </span><span class="s2">// Toast.makeText(getActivity(), Integer.toString(Value), Toast.LENGTH_SHORT).show();</span><span class="s1"> 
+ 
+        </span><span class="s0">if</span><span class="s1">(Value&gt;</span><span class="s3">0</span><span class="s1">){ 
+            </span><span class="s2">//means this is in view mode - not the add contact part.</span><span class="s1"> 
+ 
+            </span><span class="s2">// Toast.makeText(getActivity(), Integer.toString(Value), Toast.LENGTH_SHORT).show();</span><span class="s1"> 
+ 
+            Cursor rs = mydb.getData(Value); 
+            id_To_Update = Value; 
+            rs.moveToFirst(); 
+ 
+            String nam   = rs.getString(rs.getColumnIndex(DBHelper.CONTACTS_COLUMN_NAME)); 
+            String phon  = rs.getString(rs.getColumnIndex(DBHelper.CONTACTS_COLUMN_PHONE)); 
+            String emai  = rs.getString(rs.getColumnIndex(DBHelper.CONTACTS_COLUMN_EMAIL)); 
+            String stree = rs.getString(rs.getColumnIndex(DBHelper.CONTACTS_COLUMN_STREET)); 
+            String plac  = rs.getString(rs.getColumnIndex(DBHelper.CONTACTS_COLUMN_CITY)); 
+ 
+            </span><span class="s0">if </span><span class="s1">(!rs.isClosed()) { 
+                rs.close(); 
+            } 
+ 
+            </span><span class="s2">// Toast.makeText(getActivity(), nam, Toast.LENGTH_SHORT).show();</span><span class="s1"> 
+            setButtonsToViewMode(); 
+ 
+            name.setText((CharSequence)nam); 
+            name.setFocusable(</span><span class="s0">false</span><span class="s1">); 
+            name.setClickable(</span><span class="s0">false</span><span class="s1">); 
+            name.setFocusableInTouchMode(</span><span class="s0">false</span><span class="s1">); 
+            name.setEnabled(</span><span class="s0">false</span><span class="s1">); 
+ 
+            phone.setText((CharSequence)phon); 
+            phone.setFocusable(</span><span class="s0">false</span><span class="s1">); 
+            phone.setClickable(</span><span class="s0">false</span><span class="s1">); 
+            phone.setFocusableInTouchMode(</span><span class="s0">false</span><span class="s1">); 
+            phone.setEnabled(</span><span class="s0">false</span><span class="s1">); 
+ 
+            email.setText((CharSequence)emai); 
+            email.setFocusable(</span><span class="s0">false</span><span class="s1">); 
+            email.setClickable(</span><span class="s0">false</span><span class="s1">); 
+            email.setFocusableInTouchMode(</span><span class="s0">false</span><span class="s1">); 
+            email.setEnabled(</span><span class="s0">false</span><span class="s1">); 
+ 
+            street.setText((CharSequence)stree); 
+            street.setFocusable(</span><span class="s0">false</span><span class="s1">); 
+            street.setClickable(</span><span class="s0">false</span><span class="s1">); 
+            street.setFocusableInTouchMode(</span><span class="s0">false</span><span class="s1">); 
+            street.setEnabled(</span><span class="s0">false</span><span class="s1">); 
+ 
+            place.setText((CharSequence)plac); 
+            place.setFocusable(</span><span class="s0">false</span><span class="s1">); 
+            place.setClickable(</span><span class="s0">false</span><span class="s1">); 
+            place.setFocusableInTouchMode(</span><span class="s0">false</span><span class="s1">); 
+            place.setEnabled(</span><span class="s0">false</span><span class="s1">); 
+ 
+        } 
+ 
+        </span><span class="s2">// setting the listeners for the buttons</span><span class="s1"> 
+        mEditButton   = (Button) getActivity().findViewById(R.id.button_edit); 
+        mSaveButton   = (Button) getActivity().findViewById(R.id.button1); 
+        mDeleteButton = (Button) getActivity().findViewById(R.id.button_delete); 
+ 
+        mEditButton.setOnClickListener(</span><span class="s0">new </span><span class="s1">View.OnClickListener() { 
+            @Override 
+            </span><span class="s0">public void </span><span class="s1">onClick(View view) { 
+ 
+                setButtonsToEditMode(); 
+                onEditContactClick(); 
+ 
+            } 
+        }); 
+ 
+        mSaveButton.setOnClickListener(</span><span class="s0">new </span><span class="s1">View.OnClickListener() { 
+            @Override 
+            </span><span class="s0">public void </span><span class="s1">onClick(View view) { 
+                run(); 
+                setButtonsToViewMode(); 
+            } 
+        }); 
+ 
+        mDeleteButton.setOnClickListener(</span><span class="s0">new </span><span class="s1">View.OnClickListener() { 
+            @Override 
+            </span><span class="s0">public void </span><span class="s1">onClick(View view) { 
+                onDeleteContactClick(); 
+            } 
+        }); 
+    } 
+ 
+    </span><span class="s0">private void </span><span class="s1">setButtonsToEditMode(){ 
+        mSaveButton.setVisibility(View.VISIBLE); 
+        mEditButton.setVisibility(View.INVISIBLE); 
+        mDeleteButton.setVisibility(View.INVISIBLE); 
+    } 
+    </span><span class="s0">private void </span><span class="s1">setButtonsToViewMode(){ 
+        mSaveButton.setVisibility(View.INVISIBLE); 
+        mEditButton.setVisibility(View.VISIBLE); 
+        mDeleteButton.setVisibility(View.VISIBLE); 
+    } 
+ 
+    </span><span class="s0">public void </span><span class="s1">onDeleteContactClick(){ 
+ 
+        AlertDialog.Builder builder = </span><span class="s0">new </span><span class="s1">AlertDialog.Builder(getActivity()); 
+ 
+        builder.setMessage(R.string.deleteContact) 
+                .setPositiveButton(R.string.yes, </span><span class="s0">new </span><span class="s1">DialogInterface.OnClickListener() { 
+                    </span><span class="s0">public void </span><span class="s1">onClick(DialogInterface dialog, </span><span class="s0">int </span><span class="s1">id) { 
+                        mydb.deleteContact(id_To_Update); 
+                        Toast.makeText(getActivity().getApplicationContext(), </span><span class="s4">&quot;Deleted Successfully&quot;</span><span class="s1">, Toast.LENGTH_SHORT).show(); 
+                        Intent intent = </span><span class="s0">new </span><span class="s1">Intent(getActivity().getApplicationContext(),MainActivity.</span><span class="s0">class</span><span class="s1">); 
+                        startActivity(intent);  </span><span class="s2">// back to main activity</span><span class="s1"> 
+                    } 
+                }) 
+                .setNegativeButton(R.string.no, </span><span class="s0">new </span><span class="s1">DialogInterface.OnClickListener() { 
+                    </span><span class="s0">public void </span><span class="s1">onClick(DialogInterface dialog, </span><span class="s0">int </span><span class="s1">id) { 
+                        </span><span class="s2">// User cancelled the dialog</span><span class="s1"> 
+                    } 
+                }); 
+        AlertDialog d = builder.create(); 
+        d.setTitle(</span><span class="s4">&quot;Are you sure?&quot;</span><span class="s1">); 
+        d.show(); 
+ 
+    } 
+ 
+    </span><span class="s0">public void </span><span class="s1">onEditContactClick(){ 
+ 
+        name.setEnabled(</span><span class="s0">true</span><span class="s1">); 
+        name.setFocusableInTouchMode(</span><span class="s0">true</span><span class="s1">); 
+        name.setClickable(</span><span class="s0">true</span><span class="s1">); 
+        name.setFocusable(</span><span class="s0">true</span><span class="s1">); 
+ 
+ 
+        phone.setEnabled(</span><span class="s0">true</span><span class="s1">);  
+        phone.setFocusableInTouchMode(</span><span class="s0">true</span><span class="s1">); 
+        phone.setClickable(</span><span class="s0">true</span><span class="s1">); 
+       </span><span class="s2">// phone.setFocusable(true);</span><span class="s1"> 
+ 
+        email.setEnabled(</span><span class="s0">true</span><span class="s1">); 
+        email.setFocusableInTouchMode(</span><span class="s0">true</span><span class="s1">); 
+        email.setClickable(</span><span class="s0">true</span><span class="s1">); 
+       </span><span class="s2">// email.setFocusable(true);</span><span class="s1"> 
+ 
+        street.setEnabled(</span><span class="s0">true</span><span class="s1">); 
+        street.setFocusableInTouchMode(</span><span class="s0">true</span><span class="s1">); 
+        street.setClickable(</span><span class="s0">true</span><span class="s1">); 
+      </span><span class="s2">//  street.setFocusable(true);</span><span class="s1"> 
+ 
+        place.setEnabled(</span><span class="s0">true</span><span class="s1">); 
+        place.setFocusableInTouchMode(</span><span class="s0">true</span><span class="s1">); 
+        place.setClickable(</span><span class="s0">true</span><span class="s1">); 
+     </span><span class="s2">//   place.setFocusable(true);</span><span class="s1"> 
+ 
+    } 
+ 
+    </span><span class="s0">public void </span><span class="s1">run()     { 
+ 
+        </span><span class="s0">int </span><span class="s1">Value = getShownIndex(); 
+        </span><span class="s0">if</span><span class="s1">(Value&gt;</span><span class="s3">0</span><span class="s1">){ 
+ 
+            </span><span class="s2">// Updating a contact</span><span class="s1"> 
+            </span><span class="s0">if</span><span class="s1">(mydb.updateContact(id_To_Update,name.getText().toString(), phone.getText().toString(), email.getText().toString(), street.getText().toString(), place.getText().toString())){ 
+                Toast.makeText(getActivity().getApplicationContext(), </span><span class="s4">&quot;Updated&quot;</span><span class="s1">, Toast.LENGTH_SHORT).show(); 
+                </span><span class="s2">// Intent intent = new Intent(getActivity().getApplicationContext(),MainActivity.class);</span><span class="s1"> 
+                </span><span class="s2">//startActivity(intent);</span><span class="s1"> 
+            } 
+            </span><span class="s0">else</span><span class="s1">{ 
+                Toast.makeText(getActivity().getApplicationContext(), </span><span class="s4">&quot;not Updated&quot;</span><span class="s1">, Toast.LENGTH_SHORT).show(); 
+            } 
+        } 
+        </span><span class="s0">else</span><span class="s1">{ 
+            </span><span class="s2">// inserting a new contact</span><span class="s1"> 
+            </span><span class="s0">if</span><span class="s1">(mydb.insertContact(name.getText().toString(), phone.getText().toString(), email.getText().toString(), street.getText().toString(), place.getText().toString())){ 
+                Toast.makeText(getActivity().getApplicationContext(), </span><span class="s4">&quot;Contact inserted!&quot;</span><span class="s1">, Toast.LENGTH_SHORT).show(); 
+ 
+                </span><span class="s2">// disable inserting  the same contact again</span><span class="s1"> 
+ 
+ 
+            }</span><span class="s0">else</span><span class="s1">{ 
+                Toast.makeText(getActivity().getApplicationContext(), </span><span class="s4">&quot;Contact NOT inserted. &quot;</span><span class="s1">, Toast.LENGTH_SHORT).show(); 
+            } 
+ 
+            </span><span class="s2">// I don't want to start the same activity in which the fragment is running</span><span class="s1"> 
+            </span><span class="s2">// I want just to refresh the display of a fragment</span><span class="s1"> 
+ 
+ 
+            </span><span class="s2">//Intent intent = new Intent(getActivity().getApplicationContext(),MainActivity.class);</span><span class="s1"> 
+            </span><span class="s2">//startActivity(intent);</span><span class="s1"> 
+        } 
+ 
+        </span><span class="s2">// Refresh the fragment in which the list of data is re-displayed</span><span class="s1"> 
+        ContactListFragment contactListFragment = (ContactListFragment)getFragmentManager().findFragmentById(R.id.contactlist_fragment_container); 
+        </span><span class="s0">if </span><span class="s1">(contactListFragment!=</span><span class="s0">null</span><span class="s1">){ 
+            contactListFragment.refresh(); 
+        } 
+ 
+ 
+    } 
+ 
+} 
+</span></pre>
+</body>
+</html>
